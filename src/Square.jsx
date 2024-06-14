@@ -1,5 +1,5 @@
 export function Square({ owner, turn, isActive, select }) {
-  const activeClass = (isActive && !owner) ? 'active' : null;
+  const activeClass = (isActive && !owner) ? `active-${turn}` : null;
   const handleClick = (isActive && !owner) ? select : null;
 
   return (
