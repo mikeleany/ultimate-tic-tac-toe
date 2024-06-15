@@ -1,6 +1,7 @@
 import { Board, Coord } from "./board";
 
 export class Game {
+  #players;
   #turn;
   #board;
   #grid;
@@ -22,8 +23,12 @@ export class Game {
     }
   }
 
-  constructor() {
-    this.#turn = 'X';
+  constructor(players) {
+    players[0].playing = 'X';
+    players[1].playing = 'O';
+
+    this.#players = players;
+    this.#turn = 0;
     this.#board = new Board;
 
     this.#grid = Array.from({ length: 3 }, () => Array.from({ length: 3 }, () => (new Board)));
@@ -33,7 +38,7 @@ export class Game {
   }
 
   get turn() {
-    return this.#turn;
+    return this.#players[this.#turn];
   }
 
   get grid() {
@@ -53,7 +58,7 @@ export class Game {
   }
 
   clone() {
-    const clone = new Game;
+    const clone = new Game(this.#players);
 
     clone.#turn = this.#turn;
     clone.#board = this.#board.clone();
@@ -78,21 +83,16 @@ export class Game {
 
   setSquare(board, square) {
     if (this.isActive(board)) {
-      if (this.#grid[board.row][board.col].setSquare(square, this.#turn)) {
+      if (this.#grid[board.row][board.col].setSquare(square, this.turn)) {
         this.#lastMove = { board, square };
         if (this.#grid[board.row][board.col].isComplete) {
           this.#board.setSquare(board, this.#grid[board.row][board.col].winner);
         }
 
         if (!this.#board.isComplete) {
-          if (this.#turn === 'X') {
-            this.#turn = 'O';
-          } else {
-            this.#turn = 'X';
-          }
+          this.#turn = +!this.#turn;
           this.#updateActiveBoards();
         } else {
-          this.#turn = null;
           this.#activeBoards = [];
         }
 

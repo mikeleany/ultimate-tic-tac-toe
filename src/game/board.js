@@ -72,12 +72,12 @@ export class Board {
 
       // check for win or draw
       const grid = this.#grid;
-      if ((grid[coord.row][0] == grid[coord.row][1] && grid[coord.row][1] == grid[coord.row][2])
-        || (grid[0][coord.col] == grid[1][coord.col] && grid[1][coord.col] == grid[2][coord.col])) {
+      if ((grid[coord.row][0] === grid[coord.row][1] && grid[coord.row][1] === grid[coord.row][2])
+        || (grid[0][coord.col] === grid[1][coord.col] && grid[1][coord.col] === grid[2][coord.col])) {
         this.#winner = player;
-      } else if ((grid[coord.row][coord.col] == grid[1][1])
-        && ((grid[0][0] == grid[1][1] && grid[1][1] == grid[2][2])
-          || (grid[0][2] == grid[1][1] && grid[1][1] == grid[2][0]))) {
+      } else if ((grid[coord.row][coord.col] === grid[1][1])
+        && ((grid[0][0] === grid[1][1] && grid[1][1] === grid[2][2])
+          || (grid[0][2] === grid[1][1] && grid[1][1] === grid[2][0]))) {
         this.#winner = player;
       } else if (!this.#remaining) {
         this.#winner = null;

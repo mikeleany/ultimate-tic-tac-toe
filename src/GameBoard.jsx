@@ -4,7 +4,11 @@ import { Game } from './game/game';
 import { SmallBoard } from './SmallBoard';
 
 export function GameBoard() {
-  const [game, setGame] = useState(new Game);
+  const players = [
+    {name: "Player 1", type: "local", color: 'red'},
+    {name: "Player 2", type: "local", color: 'blue'},
+  ];
+  const [game, setGame] = useState(new Game(players));
 
   function setSquare(boardRow, boardCol, squareRow, squareCol) {
     const newGame = game.clone();
@@ -12,11 +16,11 @@ export function GameBoard() {
     setGame(newGame);
   }
 
-  let messageClass = game.turn;
-  let message = `It's ${game.turn}'s turn.`;
+  let messageClass = game.turn.color;
+  let message = `It's ${game.turn.name}'s turn (as ${game.turn.playing}).`;
   if (game.isComplete) {
-    messageClass = game.winner;
-    message = (game.winner) ? `${game.winner} wins.` : 'The game is drawn.' ;
+    messageClass = game.winner && game.winner.color;
+    message = (game.winner) ? `${game.winner.name} wins.` : 'The game is drawn.' ;
   }
 
   return (
@@ -29,9 +33,7 @@ export function GameBoard() {
               <tr key={row}>
                 {
                   boards.map((board, col) =>
-                    <td key={col} className={'board ' + (board.isComplete ? board.winner : '')}>
-                      <SmallBoard board={board} turn={game.turn} isActive={game.isActive(new Coord(row, col))} setSquare={(srow, scol) => setSquare(row, col, srow, scol)}/>
-                    </td>
+                    <SmallBoard key={col} board={board} turn={game.turn} isActive={game.isActive(new Coord(row, col))} setSquare={(srow, scol) => setSquare(row, col, srow, scol)}/>
                   )
                 }
               </tr>
