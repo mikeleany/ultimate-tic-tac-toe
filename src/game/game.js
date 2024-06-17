@@ -16,18 +16,18 @@ export class Game {
       for (const row in this.#grid) {
         for (const col in this.#grid[row]) {
           if (!this.#grid[row][col].isComplete) {
-            this.#activeBoards.push(new Coord(parseInt(row), parseInt(col)));
+            this.#activeBoards.push(new Coord(row, col));
           }
         }
       }
     }
   }
 
-  constructor(players) {
-    players[0].playing = 'X';
-    players[1].playing = 'O';
+  constructor(playersIds) {
+    console.assert(playersIds[0], "players IDs cannot be falsy");
+    console.assert(playersIds[1], "players IDs cannot be falsy");
 
-    this.#players = players;
+    this.#players = playersIds;
     this.#turn = 0;
     this.#board = new Board;
 
@@ -43,6 +43,18 @@ export class Game {
 
   get grid() {
     return this.#grid;
+  }
+
+  get possibleMoves() {
+    let moves = [];
+
+    for (const board of this.#activeBoards) {
+      for (const square of this.#grid[board.row][board.col].remaining) {
+        moves.push({board, square});
+      }
+    }
+
+    return moves;
   }
 
   get isComplete() {

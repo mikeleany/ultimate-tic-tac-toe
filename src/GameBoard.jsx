@@ -1,19 +1,53 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Coord } from './game/board';
 import { Game } from './game/game';
 import { SmallBoard } from './SmallBoard';
 
 export function GameBoard() {
   const players = [
-    {name: "Player 1", type: "local", color: 'red'},
-    {name: "Player 2", type: "local", color: 'blue'},
+    {name: "Player 1", type: "local", color: 'red', playing: 'X'},
+    {name: "Player 2", type: "local", color: 'blue', playing: 'O'},
   ];
-  const [game, setGame] = useState(new Game(players));
+  const [{game, moveList}, setState] = useState({
+    game: new Game(players),
+    moveList: [],
+  });
+  const [aiWorker, setAiWorker] = useState(null);
+
+  useEffect(() => {
+    const aiWorker = new Worker(new URL('./ai/rand.js', import.meta.url), {type: "module"});
+    setAiWorker(aiWorker);
+
+    aiWorker.onmessage = (e) => {
+      const move = e.data;
+      console.log(move.board, move.square);
+      setSquare(move.board.row, move.board.col, move.square.row, move.square.col);
+    }
+
+    return () => {
+      aiWorker.terminate();
+      setAiWorker(null);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (game.turn.type === 'ai' && aiWorker) {
+      aiWorker.postMessage(moveList);
+    }
+  }, [game, moveList, aiWorker]);
 
   function setSquare(boardRow, boardCol, squareRow, squareCol) {
-    const newGame = game.clone();
-    newGame.setSquare(new Coord(boardRow, boardCol), new Coord(squareRow, squareCol));
-    setGame(newGame);
+    const move = {board: new Coord(boardRow, boardCol), square: new Coord(squareRow, squareCol)};
+    let message;
+
+    setState(({game, moveList}) => {
+      const newMoveList = [...moveList, move];
+
+      const newGame = game.clone();
+      console.assert(newGame.setSquare(move.board, move.square));
+
+      return {game: newGame, moveList: newMoveList};
+    });
   }
 
   let messageClass = game.turn.color;

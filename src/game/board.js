@@ -3,8 +3,8 @@ export class Coord {
   col;
 
   constructor(row, col) {
-    this.row = row;
-    this.col = col;
+    this.row = parseInt(row);
+    this.col = parseInt(col);
   }
 }
 
@@ -41,10 +41,10 @@ export class Board {
   get remaining() {
     const remaining = [];
 
-    for (row in this.#grid) {
-      for (col in this.#grid[row]) {
-        if (!this.#grid[row][col]) {
-          remaining.push(Coord(row, col));
+    for (const row in this.#grid) {
+      for (const col in this.#grid[row]) {
+        if (this.#grid[row][col] === undefined) {
+          remaining.push(new Coord(row, col));
         }
       }
     }
