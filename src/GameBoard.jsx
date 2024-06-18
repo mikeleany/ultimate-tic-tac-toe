@@ -31,7 +31,7 @@ export function GameBoard() {
   }, []);
 
   useEffect(() => {
-    if (game.turn.type === 'ai' && aiWorker) {
+    if (game.turn.type === 'ai' && !game.isComplete && aiWorker) {
       aiWorker.postMessage(moveList);
     }
   }, [game, moveList, aiWorker]);
