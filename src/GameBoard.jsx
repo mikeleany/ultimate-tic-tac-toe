@@ -6,16 +6,16 @@ import { SmallBoard } from './SmallBoard';
 export function GameBoard() {
   const players = [
     {name: "Player 1", type: "local", color: 'red', playing: 'X'},
-    {name: "Player 2", type: "local", color: 'blue', playing: 'O'},
+    {name: "Monte", type: "ai", color: 'blue', playing: 'O'},
   ];
   const [{game, moveList}, setState] = useState({
-    game: new Game(players),
+    game: new Game(players[0], players[1]),
     moveList: [],
   });
   const [aiWorker, setAiWorker] = useState(null);
 
   useEffect(() => {
-    const aiWorker = new Worker(new URL('./ai/rand.js', import.meta.url), {type: "module"});
+    const aiWorker = new Worker(new URL('./ai/monte.js', import.meta.url), {type: "module"});
     setAiWorker(aiWorker);
 
     aiWorker.onmessage = (e) => {
