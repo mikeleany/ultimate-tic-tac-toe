@@ -26,13 +26,16 @@ class Node {
   }
 
   ucb() {
-    const c = 2;
+    const c = Math.sqrt(2);
+    console.assert(this.parent && this.parent.visits);
 
-    if (!this.visits || !this.parent) {
-      return Infinity;
+    if (this.game.isComplete && this.game.winner) {
+      return this.reward(this.game.winner) * Infinity;
     }
 
-    return (this.totalReward / this.visits) + Math.sqrt(c * Math.log(this.parent.visits) / this.visits);
+    const visits = this.visits ? this.visits : 0.0001;
+
+    return (this.totalReward / visits) + c * Math.sqrt(Math.log(this.parent.visits) / visits);
   }
 
   traverse() {
@@ -75,7 +78,6 @@ class Node {
       const child = random.pick(this.children);
       return child.node;
     } else {
-      console.log('No children', this);
       return this;
     }
   }
@@ -121,8 +123,6 @@ class Node {
 }
 
 function search(root) {
-  root.expand();
-
   for (let i = 0; i < 1000; i++) {
     let leaf = root.traverse();
     if (leaf.visits) {
