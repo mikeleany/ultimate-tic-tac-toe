@@ -5,11 +5,11 @@
   text-align: center;
 }
 
-.X {
+.red {
   color: palevioletred;
 }
 
-.O {
+.blue {
   color: rgb(112, 147, 216);
 }
 
@@ -22,15 +22,15 @@ td.board {
   padding: 1.5rem;
 }
 
-td.board.X {
+td.board.red {
   background-color: rgba(216, 112, 147, .4);
 }
 
-td.board.O {
+td.board.blue {
   background-color: rgba(112, 147, 216, .4);
 }
 
-td.board.null {
+td.board.draw {
   background-color: var(--draw-color);
 }
 
@@ -43,26 +43,28 @@ td.square {
   border-color: var(--foreground-color);
 }
 
-td.square.X, td.square.O {
+td.square.red, td.square.blue {
   cursor: default;
 }
 
-table.active-X td.square {
+table.active-red td.square {
   border-color: palevioletred;
 }
 
-table.active-O td.square {
+table.active-blue td.square {
   border-color: rgb(112, 147, 216);;
 }
 
-td.square.active-X {
-  cursor: pointer;
+td.square.active-red {
   background-color: rgba(255, 127, 127, .15);
 }
 
-td.square.active-O {
-  cursor: pointer;
+td.square.active-blue {
   background-color: rgba(127, 127, 255, .15);
+}
+
+td.square.clickable {
+  cursor: pointer;
 }
 
 table > tbody > tr:first-child td {

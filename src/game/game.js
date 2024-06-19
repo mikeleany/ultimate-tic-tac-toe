@@ -1,6 +1,7 @@
 import { Board, Coord } from "./board";
 
 export class Game {
+  #players;
   #turn;
   #board;
   #grid;
@@ -15,15 +16,19 @@ export class Game {
       for (const row in this.#grid) {
         for (const col in this.#grid[row]) {
           if (!this.#grid[row][col].isComplete) {
-            this.#activeBoards.push(new Coord(parseInt(row), parseInt(col)));
+            this.#activeBoards.push(new Coord(row, col));
           }
         }
       }
     }
   }
 
-  constructor() {
-    this.#turn = 'X';
+  constructor(playersIds) {
+    console.assert(playersIds[0], "players IDs cannot be falsy");
+    console.assert(playersIds[1], "players IDs cannot be falsy");
+
+    this.#players = playersIds;
+    this.#turn = 0;
     this.#board = new Board;
 
     this.#grid = Array.from({ length: 3 }, () => Array.from({ length: 3 }, () => (new Board)));
@@ -33,11 +38,23 @@ export class Game {
   }
 
   get turn() {
-    return this.#turn;
+    return this.#players[this.#turn];
   }
 
   get grid() {
     return this.#grid;
+  }
+
+  get possibleMoves() {
+    let moves = [];
+
+    for (const board of this.#activeBoards) {
+      for (const square of this.#grid[board.row][board.col].remaining) {
+        moves.push({board, square});
+      }
+    }
+
+    return moves;
   }
 
   get isComplete() {
@@ -53,7 +70,7 @@ export class Game {
   }
 
   clone() {
-    const clone = new Game;
+    const clone = new Game(this.#players);
 
     clone.#turn = this.#turn;
     clone.#board = this.#board.clone();
@@ -78,21 +95,16 @@ export class Game {
 
   setSquare(board, square) {
     if (this.isActive(board)) {
-      if (this.#grid[board.row][board.col].setSquare(square, this.#turn)) {
+      if (this.#grid[board.row][board.col].setSquare(square, this.turn)) {
         this.#lastMove = { board, square };
         if (this.#grid[board.row][board.col].isComplete) {
           this.#board.setSquare(board, this.#grid[board.row][board.col].winner);
         }
 
         if (!this.#board.isComplete) {
-          if (this.#turn === 'X') {
-            this.#turn = 'O';
-          } else {
-            this.#turn = 'X';
-          }
+          this.#turn = +!this.#turn;
           this.#updateActiveBoards();
         } else {
-          this.#turn = null;
           this.#activeBoards = [];
         }
 

@@ -1,22 +1,60 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Coord } from './game/board';
 import { Game } from './game/game';
 import { SmallBoard } from './SmallBoard';
 
 export function GameBoard() {
-  const [game, setGame] = useState(new Game);
+  const players = [
+    {name: "Player 1", type: "local", color: 'red', playing: 'X'},
+    {name: "Player 2", type: "local", color: 'blue', playing: 'O'},
+  ];
+  const [{game, moveList}, setState] = useState({
+    game: new Game(players),
+    moveList: [],
+  });
+  const [aiWorker, setAiWorker] = useState(null);
+
+  useEffect(() => {
+    const aiWorker = new Worker(new URL('./ai/rand.js', import.meta.url), {type: "module"});
+    setAiWorker(aiWorker);
+
+    aiWorker.onmessage = (e) => {
+      const move = e.data;
+      console.log(move.board, move.square);
+      setSquare(move.board.row, move.board.col, move.square.row, move.square.col);
+    }
+
+    return () => {
+      aiWorker.terminate();
+      setAiWorker(null);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (game.turn.type === 'ai' && !game.isComplete && aiWorker) {
+      aiWorker.postMessage(moveList);
+    }
+  }, [game, moveList, aiWorker]);
 
   function setSquare(boardRow, boardCol, squareRow, squareCol) {
-    const newGame = game.clone();
-    newGame.setSquare(new Coord(boardRow, boardCol), new Coord(squareRow, squareCol));
-    setGame(newGame);
+    const move = {board: new Coord(boardRow, boardCol), square: new Coord(squareRow, squareCol)};
+    let message;
+
+    setState(({game, moveList}) => {
+      const newMoveList = [...moveList, move];
+
+      const newGame = game.clone();
+      console.assert(newGame.setSquare(move.board, move.square));
+
+      return {game: newGame, moveList: newMoveList};
+    });
   }
 
-  let messageClass = game.turn;
-  let message = `It's ${game.turn}'s turn.`;
+  let messageClass = game.turn.color;
+  let message = `It's ${game.turn.name}'s turn (as ${game.turn.playing}).`;
   if (game.isComplete) {
-    messageClass = game.winner;
-    message = (game.winner) ? `${game.winner} wins.` : 'The game is drawn.' ;
+    messageClass = game.winner && game.winner.color;
+    message = (game.winner) ? `${game.winner.name} wins.` : 'The game is drawn.' ;
   }
 
   return (
@@ -29,9 +67,7 @@ export function GameBoard() {
               <tr key={row}>
                 {
                   boards.map((board, col) =>
-                    <td key={col} className={'board ' + (board.isComplete ? board.winner : '')}>
-                      <SmallBoard board={board} turn={game.turn} isActive={game.isActive(new Coord(row, col))} setSquare={(srow, scol) => setSquare(row, col, srow, scol)}/>
-                    </td>
+                    <SmallBoard key={col} board={board} turn={game.turn} isActive={game.isActive(new Coord(row, col))} setSquare={(srow, scol) => setSquare(row, col, srow, scol)}/>
                   )
                 }
               </tr>
