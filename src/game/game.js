@@ -23,11 +23,11 @@ export class Game {
     }
   }
 
-  constructor(playersIds) {
-    console.assert(playersIds[0], "players IDs cannot be falsy");
-    console.assert(playersIds[1], "players IDs cannot be falsy");
+  constructor(player1 = 'X', player2 = 'O') {
+    console.assert(player1, "players IDs cannot be falsy");
+    console.assert(player2, "players IDs cannot be falsy");
 
-    this.#players = playersIds;
+    this.#players = [player1, player2]
     this.#turn = 0;
     this.#board = new Board;
 
@@ -70,7 +70,7 @@ export class Game {
   }
 
   clone() {
-    const clone = new Game(this.#players);
+    const clone = new Game(this.#players[0], this.#players[1]);
 
     clone.#turn = this.#turn;
     clone.#board = this.#board.clone();
@@ -100,9 +100,9 @@ export class Game {
         if (this.#grid[board.row][board.col].isComplete) {
           this.#board.setSquare(board, this.#grid[board.row][board.col].winner);
         }
+        this.#turn = +!this.#turn;
 
         if (!this.#board.isComplete) {
-          this.#turn = +!this.#turn;
           this.#updateActiveBoards();
         } else {
           this.#activeBoards = [];
