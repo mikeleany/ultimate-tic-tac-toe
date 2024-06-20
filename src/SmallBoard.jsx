@@ -1,6 +1,6 @@
 import { Square } from './Square';
 
-export function SmallBoard({ board, turn, isActive, setSquare }) {
+export function SmallBoard({ board, turn, lastMove, isActive, setSquare }) {
   const tdClasses = ['board'];
   if (board.isComplete) {
     tdClasses.push(board.winner ? board.winner.color : 'draw');
@@ -17,7 +17,14 @@ export function SmallBoard({ board, turn, isActive, setSquare }) {
               <tr key={row}>
                 {
                   squares.map((square, col) =>
-                    <Square key={col} owner={square} turn={turn} isActive={isActive} select={() => setSquare(row, col)}/>
+                    <Square
+                      key={col}
+                      owner={square}
+                      turn={turn}
+                      isLastMove={lastMove && lastMove.row === row && lastMove.col === col}
+                      isActive={isActive}
+                      select={() => setSquare(row, col)}
+                    />
                   )
                 }
               </tr>
