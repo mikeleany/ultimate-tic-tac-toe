@@ -70,7 +70,7 @@ class Node {
         newGame.setSquare(move.board, move.square);
 
         const node = new Node(newGame, this);
-        this.children.push({move, node});
+        this.children.push({ move, node });
       }
     }
 

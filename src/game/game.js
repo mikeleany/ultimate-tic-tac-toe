@@ -45,12 +45,16 @@ export class Game {
     return this.#grid;
   }
 
+  get lastMove() {
+    return this.#lastMove;
+  }
+
   get possibleMoves() {
     let moves = [];
 
     for (const board of this.#activeBoards) {
       for (const square of this.#grid[board.row][board.col].remaining) {
-        moves.push({board, square});
+        moves.push({ board, square });
       }
     }
 

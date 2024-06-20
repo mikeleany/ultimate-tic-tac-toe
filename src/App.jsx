@@ -6,7 +6,7 @@ function App() {
   return (
     <>
       <h1>Ultimate Tic Tac Toe</h1>
-      <GameBoard/>
+      <GameBoard />
     </>
   )
 }
