@@ -123,11 +123,9 @@ class Node {
 }
 
 function search(root) {
-  for (let i = 0; i < 1000; i++) {
+  for (let i = 0; i < (1 << 10); i++) {
     let leaf = root.traverse();
-    if (leaf.visits) {
-      leaf = leaf.expand();
-    }
+    leaf = leaf.expand();
 
     const winner = leaf.rollout();
     let reward = -1;
