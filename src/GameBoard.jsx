@@ -58,7 +58,7 @@ export function GameBoard() {
   }
 
   return (
-    <>
+    <main>
       <h2 className={messageClass}>{message}</h2>
       <table>
         <tbody>
@@ -82,6 +82,6 @@ export function GameBoard() {
           }
         </tbody>
       </table>
-    </>
+    </main>
   )
 }
