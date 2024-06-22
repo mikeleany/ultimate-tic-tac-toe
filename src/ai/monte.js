@@ -122,12 +122,10 @@ class Node {
   }
 }
 
-function search(root) {
-  for (let i = 0; i < 1000; i++) {
+function search(root, simulations) {
+  for (let i = 0; i < simulations; i++) {
     let leaf = root.traverse();
-    if (leaf.visits) {
-      leaf = leaf.expand();
-    }
+    leaf = leaf.expand();
 
     const winner = leaf.rollout();
     let reward = -1;
@@ -138,23 +136,23 @@ function search(root) {
     }
 
     leaf.backPropagate(winner);
-    console.log(winner, root, leaf);
   }
 
   return root.bestMove();
 }
 
-function findBestMove(game) {
+function findBestMove(game, difficulty) {
   const root = new Node(game, null);
 
-  return search(root);
+  return search(root, 1 << difficulty);
 }
 
 onmessage = (e) => {
   const game = new Game;
-  for (const move of e.data) {
+  const { difficulty, moveList } = e.data;
+  for (const move of moveList) {
     game.setSquare(move.board, move.square);
   }
 
-  postMessage(findBestMove(game));
+  postMessage(findBestMove(game, difficulty));
 }
