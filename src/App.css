@@ -38,7 +38,7 @@ td.board.draw {
 td.square {
   width: clamp(3px, 3rem, 7.8vmin);
   height: clamp(3px, 3rem, 7.8vmin);
-  font-size: clamp(2px, 2rem, 2.6vmin);
+  font-size: clamp(2px, 2rem, 5.2vmin);
   border-width: 2px;
   border-style: solid;
   border-color: var(--foreground-color);
