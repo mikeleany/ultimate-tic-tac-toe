@@ -2,6 +2,7 @@
   max-width: 1280px;
   margin: 0 auto;
   padding: 2rem;
+  padding: clamp(1px, 2rem, 5vmin);
   text-align: center;
 }
 
@@ -18,8 +19,8 @@ table {
 }
 
 td.board {
-  border: 7px solid var(--foreground-color);
-  padding: 1.5rem;
+  border: clamp(3px, 7px, 1vmin) solid var(--foreground-color);
+  padding: clamp(1px, 1.5rem, 3vmin);
 }
 
 td.board.red {
@@ -35,9 +36,9 @@ td.board.draw {
 }
 
 td.square {
-  width: 3rem;
-  height: 3rem;
-  font-size: 2rem;
+  width: clamp(3px, 3rem, 7.8vmin);
+  height: clamp(3px, 3rem, 7.8vmin);
+  font-size: clamp(2px, 2rem, 2.6vmin);
   border-width: 2px;
   border-style: solid;
   border-color: var(--foreground-color);
