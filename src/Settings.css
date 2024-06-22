@@ -1,0 +1,45 @@
+dialog {
+  border-radius: 20px;
+}
+
+form.settings {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6em;
+  margin: 1.5em;
+}
+
+form.settings>* {
+  width: 100%;
+}
+
+fieldset.settings-mode {
+  border-radius: 10px;
+}
+
+fieldset.settings-mode>div {
+  text-align: left;
+}
+
+input[name="difficulty"] {
+  width: 200px;
+  margin: 0;
+}
+
+datalist#ai-difficulty {
+  display: flex;
+  justify-content: space-between;
+  width: 200px;
+}
+
+datalist#ai-difficulty>option {
+  padding: 0;
+  width: 1em;
+  font-size: x-small;
+}
+
+.settings-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 0.6em;
+}

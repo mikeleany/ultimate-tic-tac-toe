@@ -8,7 +8,7 @@ export function Navbar({ newGame, undo, openSettings }) {
       </div>
       <div className='app-header-links'>
         <button className='icon-button' title='New game' onClick={newGame}>
-          <span className='material-icons'>tag</span>
+          <span className='material-icons'>restart_alt</span>
         </button>
         <button className='icon-button' title='Undo' onClick={undo} disabled>
           <span className='material-icons'>undo</span>

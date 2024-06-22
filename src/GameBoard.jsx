@@ -3,16 +3,15 @@ import { Coord } from './game/board';
 import { Game } from './game/game';
 import { SmallBoard } from './SmallBoard';
 
-export function GameBoard() {
-  const players = [
-    { name: "Player 1", type: "local", color: 'red', playing: 'X' },
-    { name: "Monte", type: "ai", color: 'blue', playing: 'O' },
-  ];
+export function GameBoard({ players, difficulty }) {
   const [{ game, moveList }, setState] = useState({
-    game: new Game(players[0], players[1]),
+    game: new Game({ index: 0, color: players[0].color, playing: 'X' }, { index: 1, color: players[1].color, playing: 'O' }),
     moveList: [],
   });
   const [aiWorker, setAiWorker] = useState(null);
+  const [isThinking, setThinking] = useState(false);
+
+  const turn = players[game.turn.index];
 
   useEffect(() => {
     const aiWorker = new Worker(new URL('./ai/monte.js', import.meta.url), { type: "module" });
@@ -20,21 +19,23 @@ export function GameBoard() {
 
     aiWorker.onmessage = (e) => {
       const move = e.data;
-      console.log(move.board, move.square);
       setSquare(move.board.row, move.board.col, move.square.row, move.square.col);
+      setThinking(false);
     }
 
     return () => {
       aiWorker.terminate();
       setAiWorker(null);
+      setThinking(false);
     }
   }, []);
 
   useEffect(() => {
-    if (game.turn.type === 'ai' && !game.isComplete && aiWorker) {
-      aiWorker.postMessage(moveList);
+    if (turn.type === 'ai' && !game.isComplete && aiWorker && !isThinking) {
+      setThinking(true);
+      aiWorker.postMessage({ difficulty, moveList });
     }
-  }, [game, moveList, aiWorker]);
+  }, [game, moveList, aiWorker, isThinking, players, difficulty]);
 
   function setSquare(boardRow, boardCol, squareRow, squareCol) {
     const move = { board: new Coord(boardRow, boardCol), square: new Coord(squareRow, squareCol) };
@@ -50,11 +51,12 @@ export function GameBoard() {
     });
   }
 
-  let messageClass = game.turn.color;
-  let message = `It's ${game.turn.name}'s turn (as ${game.turn.playing}).`;
+  let messageClass = turn.color;
+  let message = `It's ${turn.name}'s turn (as ${turn.playing}).`;
   if (game.isComplete) {
-    messageClass = game.winner && game.winner.color;
-    message = (game.winner) ? `${game.winner.name} wins.` : 'The game is drawn.';
+    const winner = game.winner ? players[game.winner.index] : null;
+    messageClass = winner && winner.color;
+    message = (winner) ? `${winner.name} wins.` : 'The game is drawn.';
   }
 
   return (
@@ -70,7 +72,7 @@ export function GameBoard() {
                     <SmallBoard
                       key={col}
                       board={board}
-                      turn={game.turn}
+                      turn={turn}
                       lastMove={(game.lastMove && game.lastMove.board.row === row && game.lastMove.board.col === col) ? game.lastMove.square : null}
                       isActive={game.isActive(new Coord(row, col))}
                       setSquare={(srow, scol) => setSquare(row, col, srow, scol)}
